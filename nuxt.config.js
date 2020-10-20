@@ -1,4 +1,4 @@
-const BASE_PATH = "/meeting";
+const BASE_PATH = "/";
 
 //只有生产或者预发环境走CDN
 //我这个项目生产环境也不走CDN所以不配置
@@ -7,7 +7,6 @@ const CDNPATH = undefined;
 
 let isOnline = process.env.NODE_ENV != 'test';
 
-console.log('nuxtconfig.js',process.env.NODE_ENV)
 
 export default {
   mode: 'universal',

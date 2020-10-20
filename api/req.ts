@@ -1,8 +1,9 @@
-import axios,{AxiosResponse} from "axios";
+import axios1 ,{AxiosResponse} from "axios";
+import {API,APIConstraintException} from "@/api/types"
 
-
-// 超时时间设置 15s
-axios.defaults.timeout = seconds(15);
+export const axios = axios1
+// 超时时间设置 
+axios.defaults.timeout = seconds(30);
 
 // 为每个请求增加唯一ID参数 已知副作用:对config有修改
 // 一来可以去除某些浏览器上对Get请求对缓存
@@ -34,39 +35,14 @@ export function uuidGen():string{
 }
 
 // 秒转为毫秒
-export function seconds(n:number):number{
+function seconds(n:number):number{
   return n * 1000
 }
 
-export function url(path:string):string{
-  return ('/api/management/' + path).split("//").join("/");
-}
-export function ramadan(path:string):string{
+export function testurl(path:string):string{
   return ('/api/ramadan/' + path).split("//").join("/");
 }
-export function apijson(path:string):string{
-  return ('/' + path).split("//").join("/");
-}
 
-export type API<T> = {
-  success: true,
-  responseHeader:{
-    status: number,
-    version: string
-  },
-  response: T
-} | {
-  success: false,
-  responseHeader:{
-    status: number
-    msg: string | null,
-    version: string
-  }
-}
-
-
-
-// 强转类型
 export function transAPIData<T>(apiData:API<T>):API<T>{
   if(apiData.responseHeader.status == 200){
     apiData.success = true;
@@ -76,18 +52,13 @@ export function transAPIData<T>(apiData:API<T>):API<T>{
   return apiData;
 }
 
+// 如接口成功返回则返接口数据，否则抛出异常
 export function takeData<T>(resp:AxiosResponse<API<T>>):T{
   let apiData = resp.data
   transAPIData(apiData);
   if(apiData.success){
     return apiData.response;
   }else{
-    throw {
-      type: "takeData",
-      code: apiData.responseHeader.status,
-      message: apiData.responseHeader.msg,
-      config:resp.config,
-      target: apiData
-    }
+    throw new APIConstraintException(apiData.responseHeader)
   }
 }
