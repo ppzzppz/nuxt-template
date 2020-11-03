@@ -28,10 +28,3 @@ yarn generate:test
 ```
 yarn generate:online
 ```
-
-# 项目原则
-
-- 程序约束大于人
-- 页面提交最小化
-- 三方尽量最小去使用
-- 少用跨多机制
